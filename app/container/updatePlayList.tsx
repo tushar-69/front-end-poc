@@ -1,48 +1,72 @@
 "use client";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import IPlaylist from "../playlist/iPlaylist";
+import axios from "axios";
+import { apiEndPoint } from "../constants/constants";
 
 export default function UpdatePlayList(props: IPlaylist) {
-    const formData = props;
-    const [playList, setPlayList] = useState<IPlaylist>(props);
+    // const formData = props;
+    // const [playList, setPlayList] = useState<IPlaylist>(props);
+    const [name, setName] = useState(props.name);
+    const [movies, setMovies] = useState<Array<string>>(props.movies);
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: any) => {
+        console.log('inside handleSubmit');
+        console.log();
         e.preventDefault();
+        // const playList: IPlaylist = { name : name, movies : movies };
+
+        await axios.put(apiEndPoint, {
+            id: props.id,
+            name: name,
+            movies: movies
+        });
     }
 
-    const handleRemoveMovie = (movie: string) => {
-        setPlayList({...playList, movies: playList.movies.filter((m) => m !== movie)});
+    const handleChange = (e: any, i: number)=>{
+        const {value}=e.target
+        const onchangeVal = [...movies]
+        onchangeVal[i]=value
+        setMovies(onchangeVal)
+    }
+
+    const handleRemoveMovie = (index: number) => {
+        const deleteVal = [...movies]
+        deleteVal.splice(index,1)
+        setMovies(deleteVal)
     }
 
     const handleAddMovie = () => {
-        setPlayList({...playList, movies: ['']});
+        setMovies([...movies, '']);
     }
 
     return(
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => handleSubmit(e)}>
             <label>Name : 
                 <input
                     type="text"
                     name="Name"
-                    value={formData.name}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                 />
             </label>
 
-            {formData.movies.map((movie) => (
-                <div key={movie}>
+            {movies.map((movie, index) => (
+                <div key={index}>
                     <label>Movie : 
                         <input
                             type="text"
                             value={movie}
+                            onChange={(e)=>handleChange(e,index)}
                         />
                     </label>
-                    <button type="button" onClick={() => handleRemoveMovie(movie)}>
+                    <button type="button" onClick={() => handleRemoveMovie(index)}>
                         Remove Movie
                     </button>
                 </div>
             ))}
 
-            <button type="button" onClick={() => handleAddMovie}>
+            <button type="button" onClick={() => handleAddMovie()}>
                 Add Movie
             </button>
 

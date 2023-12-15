@@ -5,13 +5,13 @@ import { useState, useEffect } from "react";
 import IPlaylist from './iPlaylist';
 import AddPlayList from '../container/addPlayList';
 import UpdatePlayList from '../container/updatePlayList';
+import { apiEndPoint } from '../constants/constants';
 
 export default function PlayListPage () {
   const [toggleAddPlayList, setToggleAddPlayList] = useState(false);
   const [toggleUpdatePlayList, setToggleUpdatePlayList] = useState(false);
   const [playLists, setPlayLists] = useState<Array<IPlaylist>>([]);
   const [updatePlayListData, setUpdatePlayListData] = useState<IPlaylist>();
-  const apiEndPoint = "http://localhost:5213/playlist";
 
   const getPlayLists = async () => {
     const { data: res } = await axios.get(apiEndPoint);
@@ -46,7 +46,7 @@ export default function PlayListPage () {
           Add Playlist
         </button>
         {toggleAddPlayList && <AddPlayList />}
-        {toggleUpdatePlayList && <UpdatePlayList name={updatePlayListData?.name || ''} movies={updatePlayListData?.movies || []} />}
+        {toggleUpdatePlayList && <UpdatePlayList id={updatePlayListData?.id} name={updatePlayListData?.name || ''} movies={updatePlayListData?.movies || []} />}
         <table className="table">
           <thead>
             <tr>
@@ -60,9 +60,9 @@ export default function PlayListPage () {
             {playLists?.map((post) => (
               <tr key={post.id}>
                 <td > {post.name} </td>
-                {post.movies.map((movie) => (
-                  <li>{movie}</li>
-                ))}
+                <td>{post.movies.map((movie, i) => (
+                  <li key={i}>{movie}</li>
+                ))}</td>
                 <td>
                   <button
                     onClick={() => handleUpdate(post)}

@@ -1,51 +1,68 @@
 // "use client";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import IPlaylist from "../playlist/iPlaylist";
+import axios from "axios";
+import { apiEndPoint } from "../constants/constants";
 
 export default function AddPlayList() {
-    const formData = {
-        name : '',
-        movies: []
-    };
-    const [playList, setPlayList] = useState<IPlaylist>(formData);
+    const [name, setName] = useState('');
+    const [movies, setMovies] = useState<Array<string>>(['']);
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
+        const playList: IPlaylist = { name : name, movies : movies };
+
+        await axios.post(apiEndPoint, {
+            name: name,
+            movies: movies
+        });
     }
 
-    const handleRemoveMovie = (movie: string) => {
-        setPlayList({...playList, movies: playList.movies.filter((m) => m !== movie)});
+    const handleChange = (e: any, i: number)=>{
+        const {value}=e.target
+        const onchangeVal = [...movies]
+        onchangeVal[i]=value
+        setMovies(onchangeVal)
     }
 
-    const handleAddMovie = (movie: string) => {
-        setPlayList({...playList, movies: [movie]});
+    const handleRemoveMovie = (index: number) => {
+        const deleteVal = [...movies]
+        deleteVal.splice(index,1)
+        setMovies(deleteVal)
+    }
+
+    const handleAddMovie = () => {
+        setMovies([...movies, '']);
     }
 
     return(
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => handleSubmit(e)}>
             <label>Name : 
                 <input
                     type="text"
                     name="Name"
-                    value={formData.name}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                 />
             </label>
 
-            {formData.movies.map((movie) => (
-                <div key={movie}>
+            {movies.map((movie, index) => (
+                <div className="form-inline" key={index}>
                     <label>Movie : 
                         <input
                             type="text"
+                            name="movie"
                             value={movie}
+                            onChange={(e)=>handleChange(e,index)}
                         />
                     </label>
-                    <button type="button" onClick={() => handleRemoveMovie(movie)}>
+                    <button type="button" onClick={() => handleRemoveMovie(index)}>
                         Remove Movie
                     </button>
                 </div>
             ))}
 
-            <button type="button" onClick={() => handleAddMovie}>
+            <button type="button" onClick={() => handleAddMovie()}>
                 Add Movie
             </button>
 
