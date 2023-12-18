@@ -1,26 +1,22 @@
 "use client";
 import { useState } from "react";
 import IPlaylist from "../playlist/iPlaylist";
-import axios from "axios";
 import { apiEndPoint } from "../constants/constants";
 
 export default function UpdatePlayList(props: IPlaylist) {
-    // const formData = props;
-    // const [playList, setPlayList] = useState<IPlaylist>(props);
     const [name, setName] = useState(props.name);
     const [movies, setMovies] = useState<Array<string>>(props.movies);
 
     const handleSubmit = async (e: any) => {
-        console.log('inside handleSubmit');
-        console.log();
         e.preventDefault();
-        // const playList: IPlaylist = { name : name, movies : movies };
 
-        await axios.put(apiEndPoint, {
-            id: props.id,
-            name: name,
-            movies: movies
-        });
+        await fetch(apiEndPoint, {
+            method: "PUT",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({ id: props.id, name: name, movies: movies })
+        })
     }
 
     const handleChange = (e: any, i: number)=>{

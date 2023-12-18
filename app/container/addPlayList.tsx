@@ -1,7 +1,5 @@
-// "use client";
+"use client";
 import { useState } from "react";
-import IPlaylist from "../playlist/iPlaylist";
-import axios from "axios";
 import { apiEndPoint } from "../constants/constants";
 
 export default function AddPlayList() {
@@ -10,12 +8,21 @@ export default function AddPlayList() {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-        const playList: IPlaylist = { name : name, movies : movies };
 
-        await axios.post(apiEndPoint, {
-            name: name,
-            movies: movies
-        });
+        const response = await fetch(apiEndPoint, {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({ name: name, movies: movies })
+        })
+        const data = await response.json();
+
+        if (data?.id) {
+            alert('Playlist added successfully');
+        } else {
+            alert('Failed to add playlist');
+        }
     }
 
     const handleChange = (e: any, i: number)=>{

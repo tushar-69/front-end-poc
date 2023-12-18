@@ -1,8 +1,8 @@
 import Image from 'next/image'
-import PlayListPage from './playlist/page'
+import PlayList from './playlist/playlist'
 
 export default function Home() {
   return (
-    <PlayListPage />
+    <PlayList />
   )
 }
